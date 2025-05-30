@@ -21,7 +21,6 @@ const todoSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
       },
-      _id: false,
     },
   ],
   tags: [
@@ -42,6 +41,55 @@ const todoSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
+  },
+  updatedAt: [
+    {
+      type: Date,
+      default: Date.now,
+    },
+  ],
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    // required: true,
+  },
+  isArchived: {
+    type: Boolean,
+    default: false,
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+  isPinned: {
+    type: Boolean,
+    default: false,
+  },
+  isShared: {
+    type: Boolean,
+    default: false,
+  },
+  sharedWith: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  sharedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  color: {
+    type: String,
+    default: "#ffffff", // Default color can be set to white or any other color
+  },
+  priority: {
+    type: String,
+    enum: ["Low", "Medium", "High"],
+    default: "Low",
+  },
+  reminder: {
+    type: Date,
   },
 });
 const Todo = mongoose.model("Todo", todoSchema);

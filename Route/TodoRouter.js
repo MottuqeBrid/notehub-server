@@ -41,6 +41,7 @@ router.delete("/delete/:id", async (req, res) => {
 });
 
 router.post("/add", async (req, res) => {
+  console.log("add todo", req.body);
   try {
     const newTodo = new Todo({ ...req.body });
     const result = await newTodo.save();

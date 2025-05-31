@@ -1,11 +1,18 @@
 const express = require("express");
+const jwt = require("jsonwebtoken");
 const router = express.Router();
 // const mongoose = require("mongoose");
 const Todo = require("../Schema/TodoSchema");
 
 router.get("/all", async (req, res) => {
+  // console.log(req.cookies.token);
+  if (!req.cookies.token) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
   try {
-    const todos = await Todo.find();
+    const decoded = await jwt.verify(req.cookies.token, process.env.JWT_SECRET);
+    const todos = await Todo.find({ userId: decoded.id, isDeleted: false });
     res.status(200).json(todos.reverse());
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch todos" });
@@ -41,11 +48,20 @@ router.delete("/delete/:id", async (req, res) => {
 });
 
 router.post("/add", async (req, res) => {
-  console.log("add todo", req.body);
+  if (!req.body.userId) {
+    return res
+      .status(400)
+      .json({ success: false, error: "userId is required" });
+  }
+
   try {
     const newTodo = new Todo({ ...req.body });
     const result = await newTodo.save();
-    res.status(201).json(result);
+    res.status(201).json({
+      success: true,
+      message: "Todo created successfully",
+      data: result,
+    });
   } catch (error) {
     res.status(500).json({ error: "Failed to create todo" });
   }

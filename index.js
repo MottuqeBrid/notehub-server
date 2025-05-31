@@ -8,6 +8,7 @@ dotenv.config();
 // internal imports
 const TodoRouter = require("./Route/TodoRouter");
 const UserRouter = require("./Route/UserRouter");
+const CoverRouter = require("./Route/CoverRoute");
 const Todo = require("./Schema/TodoSchema");
 
 const app = express();
@@ -41,6 +42,7 @@ app.get("/", (req, res) => {
 });
 app.use("/todo", TodoRouter);
 app.use("/user", UserRouter);
+app.use("/cover", CoverRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT} at http://localhost:${PORT}`);

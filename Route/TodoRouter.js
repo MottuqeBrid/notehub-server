@@ -20,31 +20,67 @@ router.get("/all", async (req, res) => {
 });
 
 router.put("/update", async (req, res) => {
+  const token = req.cookies.token;
   try {
+    if (!token) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (!decoded) {
+      return res.status(401).json({ error: "Invalid token" });
+    }
+    console.log(decoded);
     const todo = await Todo.findOneAndUpdate(
-      { _id: req.body._id },
+      { _id: req.body._id, userId: decoded.id },
       {
         $set: {
           todoItems: req.body.todoItems,
           completed: req.body.completed,
         },
-      }
+      },
+      { new: true }
     );
-    res.send(todo);
+    if (!todo) {
+      return res.status(404).json({ error: "Todo not found" });
+    }
+    res.json(todo);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Failed to Update todo" });
   }
 });
 router.delete("/delete/:id", async (req, res) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
   try {
-    // console.log(req.params.id);
-    const todo = await Todo.findByIdAndDelete(req.params.id);
-    res.send(todo);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (!decoded) {
+      return res.status(401).json({ error: "Invalid token" });
+    }
+    // console.log(decoded);
+    const todo = await Todo.findOneAndUpdate(
+      { _id: req.params.id, userId: decoded.id },
+      { isDeleted: true },
+      { new: true }
+    );
+    if (!todo) {
+      return res.status(404).json({ error: "Todo not found" });
+    }
+    res.json(todo);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Failed to delete todo" });
   }
+  // try {
+  //   // console.log(req.params.id);
+  //   const todo = await Todo.findByIdAndDelete(req.params.id);
+  //   res.send(todo);
+  // } catch (error) {
+  //   console.log(error);
+  //   res.status(500).json({ error: "Failed to delete todo" });
+  // }
 });
 
 router.post("/add", async (req, res) => {

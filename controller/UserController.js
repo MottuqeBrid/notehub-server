@@ -1,12 +1,9 @@
-const express = require("express");
+// external import
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const router = express.Router();
+
+// internal imports
 const User = require("../Schema/UserSchema");
-const {
-  signupMiddleware,
-  verifyToken,
-} = require("../middleware/userMiddleware");
 const RefreshToken = require("../Schema/RefreshTokenSchema");
 
 // loin
@@ -27,9 +24,10 @@ const loginController = async (req, res) => {
       );
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        // secure: false, // true in production with HTTPS
         sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        // secure: process.env.NODE_ENV === "production", // ✅ production এ secure=true
+        // sameSite: "none", // ✅ cross-site হলে none দিন
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       });
       const token = await jwt.sign(
         { id: user._id, role: user.userType },
@@ -55,7 +53,6 @@ const loginController = async (req, res) => {
         isBlocked,
         isActive,
         profilePicture,
-        ...rest
       } = user;
 
       res
@@ -63,9 +60,11 @@ const loginController = async (req, res) => {
         .cookie("token", token, {
           path: "/",
           httpOnly: true,
+          // secure: process.env.NODE_ENV === "production", // ✅ production এ secure=true
+          // sameSite: "none", // ✅ cross-site হলে none দিন
           // secure: true, // for dev, not HTTPS
           sameSite: "strict", // Adjust based on your needs
-          maxAge: 3600000, // 1 hour in milliseconds
+          maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         })
         .json({
           user: {
@@ -91,7 +90,6 @@ const loginController = async (req, res) => {
 // logout
 const logoutController = async (req, res) => {
   const token = req.cookies?.refreshToken;
-  console.log(token, req.body);
   // Destroy the session
   await User.findByIdAndUpdate(req.body._id, {
     $set: { lastLogout: new Date(), isActive: false },
@@ -134,9 +132,8 @@ const signupController = async (req, res) => {
     );
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      // secure: false, // true in production with HTTPS
       sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
     const token = jwt.sign(
       { id: result._id, role: result.userType },
@@ -155,7 +152,6 @@ const signupController = async (req, res) => {
       isBlocked,
       isActive,
       profilePicture,
-      ...rest
     } = result;
 
     res
@@ -163,9 +159,9 @@ const signupController = async (req, res) => {
       .cookie("token", token, {
         path: "/",
         httpOnly: true,
-        // secure: true, // for dev, not HTTPS
         sameSite: "strict", // Adjust based on your needs
-        maxAge: 3600000, // 1 hour in milliseconds
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        // secure: process.env.NODE_ENV === "production", // ✅ production এ secure=true
       })
       .json({
         success: true,
@@ -192,7 +188,7 @@ const meController = async (req, res) => {
   const token = req.token;
   const id = req.userId;
   if (!token) {
-    return res.status(200).json({ success: false, error: "No token provided" });
+    return res.status(401).json({ success: false, error: "No token provided" });
   }
   try {
     const user = await User.findById(id).select("-password -otp");

@@ -20,6 +20,19 @@ router.post("/signup", signupMiddleware, signupController);
 
 // gate data by token
 router.get("/me", refreshTokenMiddleware, meController);
+router.get("/profile", async (req, res) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  try {
+    const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch user profile" });
+  }
+});
 
 router.post("/login", loginController);
 

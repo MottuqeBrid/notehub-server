@@ -5,7 +5,6 @@ const router = express.Router();
 const Todo = require("../Schema/TodoSchema");
 
 router.get("/all", async (req, res) => {
-  // console.log(req.cookies.token);
   if (!req.cookies.token) {
     return res.status(401).json({ error: "Unauthorized" });
   }
@@ -29,7 +28,6 @@ router.put("/update", async (req, res) => {
     if (!decoded) {
       return res.status(401).json({ error: "Invalid token" });
     }
-    console.log(decoded);
     const todo = await Todo.findOneAndUpdate(
       { _id: req.body._id, userId: decoded.id },
       {
@@ -45,7 +43,6 @@ router.put("/update", async (req, res) => {
     }
     res.json(todo);
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error: "Failed to Update todo" });
   }
 });
@@ -59,7 +56,6 @@ router.delete("/delete/:id", async (req, res) => {
     if (!decoded) {
       return res.status(401).json({ error: "Invalid token" });
     }
-    // console.log(decoded);
     const todo = await Todo.findOneAndUpdate(
       { _id: req.params.id, userId: decoded.id },
       { isDeleted: true },
@@ -70,17 +66,8 @@ router.delete("/delete/:id", async (req, res) => {
     }
     res.json(todo);
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error: "Failed to delete todo" });
   }
-  // try {
-  //   // console.log(req.params.id);
-  //   const todo = await Todo.findByIdAndDelete(req.params.id);
-  //   res.send(todo);
-  // } catch (error) {
-  //   console.log(error);
-  //   res.status(500).json({ error: "Failed to delete todo" });
-  // }
 });
 
 router.post("/add", async (req, res) => {

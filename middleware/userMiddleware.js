@@ -13,7 +13,6 @@ const signupMiddleware = async (req, res, next) => {
 };
 
 const verifyToken = (req, res, next) => {
-  console.log("Verifying token...");
   const token = req.headers["authorization"];
   if (!token) {
     return res.status(401).json({ error: "No token provided" });
@@ -70,9 +69,8 @@ const refreshTokenMiddleware = (req, res, next) => {
 
             res.cookie("token", accessToken, {
               httpOnly: true,
-              // secure: true, // true in production with HTTPS
               sameSite: "strict",
-              maxAge: 7 * 24 * 60 * 60 * 1000,
+              maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
             });
 
             // Proceed to next middleware/handler

@@ -74,7 +74,97 @@ const userSchema = new mongoose.Schema({
       ref: "Cover",
     },
   ],
+  bio: {
+    type: String,
+  },
+  location: {
+    type: String,
+  },
 
+  socialLinks: {
+    facebook: {
+      type: String,
+    },
+    twitter: {
+      type: String,
+    },
+    instagram: {
+      type: String,
+    },
+    linkedin: {
+      type: String,
+    },
+    website: {
+      type: String,
+    },
+  },
+  securityQuestions: [
+    {
+      question: {
+        type: String,
+      },
+      answer: {
+        type: String,
+      },
+    },
+  ],
+  studentId: {
+    type: String,
+  },
+  employeeId: {
+    type: String,
+  },
+  department: {
+    type: String,
+  },
+  education: {
+    school: {
+      type: String,
+    },
+    collage: {
+      type: String,
+    },
+    degree: {
+      type: String,
+    },
+    university: {
+      type: String,
+    },
+    year: {
+      type: String,
+    },
+  },
+  skills: {
+    type: String,
+  },
+  job: {
+    company: {
+      type: String,
+    },
+    title: {
+      type: String,
+    },
+    location: {
+      presentAddress: {
+        type: String,
+      },
+      permanentAddress: {
+        type: String,
+      },
+      city: {
+        type: String,
+      },
+      workLocation: {
+        type: String,
+      },
+    },
+    startDate: {
+      type: Date,
+    },
+    endDate: {
+      type: Date,
+    },
+  },
   createdAt: {
     type: Date,
     default: Date.now,

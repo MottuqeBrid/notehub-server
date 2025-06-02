@@ -4,7 +4,6 @@ const { Schema } = mongoose;
 const RefreshTokenSchema = new Schema({
   token: {
     type: String,
-    required: true,
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,

@@ -16,12 +16,7 @@ const app = express();
 // ["https://notehub-gray.vercel.app/", "http://localhost:5173"]
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://notehub-gray.vercel.app",
-      "https://notehub-gray.vercel.app",
-      "https://note-hub-server.vercel.app",
-    ],
+    origin: ["http://localhost:5173", "https://notehub-gray.vercel.app"],
     credentials: true,
   })
 );

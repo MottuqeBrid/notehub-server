@@ -75,10 +75,135 @@ const userSchema = new mongoose.Schema({
     },
   ],
   bio: {
-    type: String,
+    cv: {
+      type: String,
+    },
+    photo: {
+      profilePicture: {
+        type: String,
+      },
+      coverPhoto: {
+        type: String,
+      },
+      profileBanner: {
+        type: String,
+      },
+      profileVideo: {
+        type: String,
+      },
+      profileAudio: {
+        type: String,
+      },
+    },
+    birthday: {
+      type: Date,
+    },
+    about: {
+      type: String,
+    },
+    address: {
+      type: String,
+    },
+    zipCode: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+    maritalStatus: {
+      type: String,
+      enum: ["married", "unmarried"],
+    },
+    gender: {
+      type: String,
+      enum: ["male", "female"],
+    },
+    pronouns: {
+      type: String,
+      enum: ["he/him", "she/her", "they/them"],
+    },
+    hobbies: {
+      type: String,
+    },
+    languages: {
+      type: String,
+    },
+    interests: {
+      type: String,
+    },
+    favorite: {
+      favoriteBooks: {
+        type: String,
+      },
+      favoriteMovies: {
+        type: String,
+      },
+      favoriteShows: {
+        type: String,
+      },
+      favoriteMusic: {
+        type: String,
+      },
+      favoriteGames: {
+        type: String,
+      },
+      favoriteSports: {
+        type: String,
+      },
+      favoriteFood: {
+        type: String,
+      },
+      favoritePlaces: {
+        type: String,
+      },
+      favoriteActivities: {
+        type: String,
+      },
+      favoriteQuotes: {
+        type: String,
+      },
+      favoriteAuthors: {
+        type: String,
+      },
+      favoriteArtists: {
+        type: String,
+      },
+    },
+    achievements: {
+      type: String,
+    },
+    awards: {
+      type: String,
+    },
+    certifications: {
+      type: String,
+    },
+    projects: {
+      type: String,
+    },
+    publications: {
+      type: String,
+    },
   },
   location: {
-    type: String,
+    presentAddress: {
+      type: String,
+    },
+    permanentAddress: {
+      type: String,
+    },
+    city: {
+      type: String,
+    },
+    state: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+    zipCode: {
+      type: String,
+    },
   },
 
   socialLinks: {
@@ -108,30 +233,38 @@ const userSchema = new mongoose.Schema({
       },
     },
   ],
-  studentId: {
-    type: String,
-  },
   employeeId: {
     type: String,
   },
-  department: {
-    type: String,
-  },
+
   education: {
+    studentId: {
+      type: String,
+    },
     school: {
       type: String,
     },
-    collage: {
-      type: String,
+    college: {
+      name: {
+        type: String,
+      },
+      year: {
+        type: String,
+      },
     },
     degree: {
       type: String,
     },
     university: {
-      type: String,
-    },
-    year: {
-      type: String,
+      name: {
+        type: String,
+      },
+      department: {
+        type: String,
+      },
+      year: {
+        type: String,
+      },
     },
   },
   skills: {
@@ -170,8 +303,6 @@ const userSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
-
-// module.exports = mongoose.model("User", userSchema);
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;

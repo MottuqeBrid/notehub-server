@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const isProduction = process.env.NODE_ENV === "production";
 
 const signupMiddleware = async (req, res, next) => {
   const { password } = req.body;
@@ -69,7 +70,8 @@ const refreshTokenMiddleware = (req, res, next) => {
 
             res.cookie("token", accessToken, {
               httpOnly: true,
-              sameSite: "strict",
+              secure: isProduction,
+              sameSite: isProduction ? "none" : "lax",
               maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
             });
 

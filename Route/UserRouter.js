@@ -27,10 +27,27 @@ router.get("/profile", async (req, res) => {
   }
   try {
     const decoded = await jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id);
+    const user = await User.findById(decoded.id).select(
+      "-password -otp -todo -__v -createdAt -updatedAt -lastLogin -lastPasswordChange -isDeleted -isBlocked -isActive -isVerified -coverPage -lastLogout -securityQuestions"
+    );
     res.status(200).json({ success: true, user });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch user profile" });
+  }
+});
+router.patch("/update-profile", refreshTokenMiddleware, async (req, res) => {
+  const userId = req.userId; // from refreshTokenMiddleware
+  // console.log(userId);
+
+  try {
+    const user = await User.findByIdAndUpdate(userId, { ...req.body });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    await user.save();
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update user profile" });
   }
 });
 

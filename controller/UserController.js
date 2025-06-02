@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 // internal imports
 const User = require("../Schema/UserSchema");
 const RefreshToken = require("../Schema/RefreshTokenSchema");
+const isProduction = process.env.NODE_ENV === "production";
 
 // loin
 const loginController = async (req, res) => {
@@ -22,13 +23,7 @@ const loginController = async (req, res) => {
         process.env.REFRESH_TOKEN_SECRET,
         { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
       );
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        sameSite: "strict",
-        // secure: process.env.NODE_ENV === "production", // ✅ production এ secure=true
-        // sameSite: "none", // ✅ cross-site হলে none দিন
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      });
+
       const token = await jwt.sign(
         { id: user._id, role: user.userType },
         process.env.JWT_SECRET,
@@ -54,16 +49,19 @@ const loginController = async (req, res) => {
         isActive,
         profilePicture,
       } = user;
-
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      });
       res
         .status(201)
         .cookie("token", token, {
           path: "/",
           httpOnly: true,
-          // secure: process.env.NODE_ENV === "production", // ✅ production এ secure=true
-          // sameSite: "none", // ✅ cross-site হলে none দিন
-          // secure: true, // for dev, not HTTPS
-          sameSite: "strict", // Adjust based on your needs
+          secure: isProduction,
+          sameSite: isProduction ? "none" : "lax",
           maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         })
         .json({
@@ -94,21 +92,24 @@ const logoutController = async (req, res) => {
   await User.findByIdAndUpdate(req.body._id, {
     $set: { lastLogout: new Date(), isActive: false },
   });
+  console.log(req.body);
   const refreshToken = new RefreshToken({
     token: token,
-    userId: req.body.user._id,
+    userId: req.body?.user?._id,
   });
   await refreshToken.save();
   res.clearCookie("token", {
     httpOnly: true,
-    sameSite: "strict",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
   });
 
   res
     .status(200)
     .clearCookie("refreshToken", {
       httpOnly: true,
-      sameSite: "strict",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
     })
     .json({ success: true, message: "Logged out and all cookies cleared!" });
 };
@@ -130,11 +131,7 @@ const signupController = async (req, res) => {
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
     );
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      sameSite: "strict",
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-    });
+
     const token = jwt.sign(
       { id: result._id, role: result.userType },
       process.env.JWT_SECRET,
@@ -153,13 +150,23 @@ const signupController = async (req, res) => {
       isActive,
       profilePicture,
     } = result;
-
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      // sameSite: "strict",
+      secure: isProduction,
+      // sameSite: "None", // ✅ cross-site হলে none দিন
+      sameSite: isProduction ? "none" : "lax",
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    });
     res
       .status(201)
       .cookie("token", token, {
         path: "/",
         httpOnly: true,
-        sameSite: "strict", // Adjust based on your needs
+        // sameSite: "strict", // Adjust based on your needs
+        secure: isProduction,
+        // sameSite: "None", // ✅ cross-site হলে none দিন
+        sameSite: isProduction ? "none" : "lax",
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         // secure: process.env.NODE_ENV === "production", // ✅ production এ secure=true
       })

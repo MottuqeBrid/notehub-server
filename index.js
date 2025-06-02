@@ -18,7 +18,6 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "http://localhost:5174",
       "https://notehub-gray.vercel.app",
       "https://note-hub-server.vercel.app",
     ],

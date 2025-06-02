@@ -19,6 +19,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://notehub-gray.vercel.app",
+      "https://notehub-gray.vercel.app",
       "https://note-hub-server.vercel.app",
     ],
     credentials: true,

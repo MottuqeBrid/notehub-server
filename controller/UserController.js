@@ -47,7 +47,7 @@ const loginController = async (req, res) => {
         isDeleted,
         isBlocked,
         isActive,
-        profilePicture,
+        bio,
       } = user;
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
@@ -74,7 +74,7 @@ const loginController = async (req, res) => {
             isDeleted,
             isBlocked,
             isActive,
-            profilePicture,
+            bio,
           },
           token,
           success: true,
@@ -92,7 +92,6 @@ const logoutController = async (req, res) => {
   await User.findByIdAndUpdate(req.body._id, {
     $set: { lastLogout: new Date(), isActive: false },
   });
-  console.log(req.body);
   const refreshToken = new RefreshToken({
     token: token,
     userId: req.body?.user?._id,
@@ -148,7 +147,7 @@ const signupController = async (req, res) => {
       isDeleted,
       isBlocked,
       isActive,
-      profilePicture,
+      bio,
     } = result;
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -181,7 +180,7 @@ const signupController = async (req, res) => {
           isDeleted,
           isBlocked,
           isActive,
-          profilePicture,
+          bio,
         },
         token,
       });
@@ -211,7 +210,7 @@ const meController = async (req, res) => {
       isDeleted,
       isBlocked,
       isActive,
-      profilePicture,
+      bio,
     } = user;
     res.status(200).json({
       success: true,
@@ -224,7 +223,7 @@ const meController = async (req, res) => {
         isDeleted,
         isBlocked,
         isActive,
-        profilePicture,
+        bio,
       },
     });
   } catch (error) {

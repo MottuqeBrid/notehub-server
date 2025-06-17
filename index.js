@@ -35,8 +35,6 @@ const connectDB = async () => {
   }
 };
 
-connectDB();
-
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
@@ -45,6 +43,7 @@ app.use("/user", UserRouter);
 app.use("/cover", CoverRouter);
 
 app.listen(PORT, () => {
+  connectDB();
   console.log(`Server is running on port ${PORT} at http://localhost:${PORT}`);
 });
 

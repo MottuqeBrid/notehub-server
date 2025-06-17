@@ -25,6 +25,7 @@ const userSchema = new mongoose.Schema({
   otp: [
     {
       type: String,
+      expires: 300000, // OTP expires in 5 minutes
     },
   ],
   todo: [
@@ -35,7 +36,7 @@ const userSchema = new mongoose.Schema({
   ],
   isVerified: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   isDeleted: {
     type: Boolean,
@@ -48,9 +49,6 @@ const userSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true,
-  },
-  profilePicture: {
-    type: String,
   },
   lastLogin: {
     type: Date,
@@ -112,7 +110,14 @@ const userSchema = new mongoose.Schema({
     },
     maritalStatus: {
       type: String,
-      enum: ["married", "unmarried"],
+      enum: [
+        "married",
+        "unmarried",
+        "divorced",
+        "widowed",
+        "separated",
+        "other",
+      ],
     },
     gender: {
       type: String,

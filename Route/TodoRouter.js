@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 // const mongoose = require("mongoose");
 const Todo = require("../Schema/TodoSchema");
+const User = require("../Schema/UserSchema");
 
 router.get("/all", async (req, res) => {
   if (!req.cookies.token) {
@@ -80,6 +81,12 @@ router.post("/add", async (req, res) => {
   try {
     const newTodo = new Todo({ ...req.body });
     const result = await newTodo.save();
+    const user = await User.findById(req.body.userId);
+    if (!user) {
+      return res.status(404).json({ success: false, error: "User not found" });
+    }
+    user.todo.push(result._id);
+    await user.save();
     res.status(201).json({
       success: true,
       message: "Todo created successfully",

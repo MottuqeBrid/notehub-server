@@ -4,16 +4,6 @@ This is the backend for **NoteHub**, a note management web application where use
 
 ---
 
-## 📁 Project Structure
-
-notehub-server/
-├── controllers/ # Route logic
-├── models/ # Mongoose schemas
-├── routes/ # API route definitions
-├── middleware/ # JWT & role protection
-├── .env # Environment variables
-├── index.js # Entry point
-
 ---
 
 ## 🛠️ Tech Stack
